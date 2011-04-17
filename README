@@ -1,0 +1,19 @@
+Package: org.mcsoxford.graph
+License: Apache License Version 2.0
+Authors: A. Horn
+Content: Algorithm for cyclic factorization of complete graphs into spanning trees with an Euler trail
+
+== About ==
+
+This package contains a polynomial time graph algorithm which decomposes an n-complete graph of even order into edge-disjoint, isomorphic copies of a spanning tree whose edges form an Euler trail of length n-1. More general graph theoretical results about cyclic spanning tree decompositions can be found in~\cite{FK02}.
+
+== References ==
+
+@article{FK02,
+  title = {Factorizations of complete graphs into spanning trees},
+  author = {Fron\v{c}ek, D. and Kubesa, M.},
+  journal = {Congressus Numerantium},
+  volume = {154},
+  pages = {125--134},
+  year = {2002},
+}
