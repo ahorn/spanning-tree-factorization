@@ -5,10 +5,19 @@ Content: Algorithm for cyclic factorization of complete graphs into spanning tre
 
 == About ==
 
-This package contains a polynomial time graph algorithm which decomposes an n-complete graph of even order into edge-disjoint, isomorphic copies of a spanning tree whose edges form an Euler trail of length n-1. More general graph theoretical results about cyclic spanning tree decompositions can be found in~\cite{FK02}.
+This package contains a polynomial time graph algorithm which decomposes an n-complete graph of even order into edge-disjoint, isomorphic copies of a spanning tree whose edges form an Euler trail of length n-1. More general graph theoretical results about cyclic spanning tree decompositions can be found in~\cite{FK02},~\cite{F04}.
 
 == References ==
 
+@article{F04,
+  author =  {Fron{\v{c}}ek, D.},
+  title = {Cyclic decompositions of complete graphs into spanning trees},
+  journal = {Discussiones Mathematicae. Graph Theory},
+  volume = {24},
+  number = {2},
+  year = {2004},
+  pages = {345 -- 353}
+} 
 @article{FK02,
   title = {Factorizations of complete graphs into spanning trees},
   author = {Fron\v{c}ek, D. and Kubesa, M.},
