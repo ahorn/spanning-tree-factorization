@@ -1,0 +1,185 @@
+%       Aliases for theorems, propositions, lemmas
+%       corollaries, definitions, conjectures,
+%       remark, and examples.
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{fact}[theorem]{Fact}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{axiom}{Axiom} 
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{property}[theorem]{Property}
+
+\theoremstyle{definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{definition}[theorem]{Definition}
+
+\renewcommand{\l}{\langle}
+\renewcommand{\r}{\rangle}
+
+%% Generic and Logic %%
+\newcommand{\pair}[2]{\mbox{$\langle #1,\; #2 \rangle$}}
+\newcommand{\tuple}[1]{\mbox{$\langle #1 \rangle$}}
+\newcommand{\powerset}[1]{\mbox{$\mathcal{P}(#1)$}}
+\newcommand{\powfin}[1]{\mbox{$\mathcal{P}_{f}(#1)$}}
+\newcommand{\set}[1]{\mbox{$\{ #1 \}$}}
+\newcommand{\alt}{\mathrel{|}}
+\newcommand{\ent}{\vdash}
+\newcommand{\imp}{\rightarrow}
+\newcommand{\bimp}{\leftrightarrow}
+\newcommand{\deq}{\mathrel{\mathop:}=}
+\newcommand{\ptag}[1]{\tag*{\{#1\}}}
+
+%% Linear Logic and Category Theory %%
+\newcommand{\oto}{\mathrel{\relbar\joinrel\circ}}     %Linear hom arrow 
+\newcommand{\ofrom}{\mathrel{\relcirc\joinrel\relbar}}   %Lin hom back-arrow 
+\newcommand{\x}{\times}
+\newcommand{\os}{\oslash}
+\newcommand{\oa}{\oplus}
+\newcommand{\ox}{\otimes}
+\newcommand{\bigox}{\bigotimes}
+\newcommand{\bigoa}{\bigoplus}
+\newcommand{\tadj}{\dashv}        % in-text adjunction symbol
+\newcommand{\girpar}{\bindnasrempa}
+
+%% Analysis %%
+\newcommand{\reals}{\mathbb{R}}
+\newcommand{\rats}{\mathbb{Q}}
+\newcommand{\ints}{\mathbb{Z}}
+\newcommand{\nats}{\mathbb{N}}
+\newcommand{\nif}{\mathb{N}^{\infty}}
+
+%% Modal Logic and Semantics %%
+\newcommand{\may}[1]{\mbox{$\l #1\r$}}
+\newcommand{\must}[1]{\mbox{$[ #1]$}}
+\newcommand{\semantics}[1]{\mbox{$\llbracket #1 \rrbracket$}}
+
+%% Domain Theory %%
+\newcommand{\pre}{\sqsubseteq}
+\newcommand{\ua}[1]{\mbox{$\uparrow(#1)$}}    
+\newcommand{\da}[1]{\mbox{$\downarrowarrow(#1)$}}    
+\newcommand{\dirsup}{\bigsqcup}
+\newcommand{\lub}{\bigvee}
+\newcommand{\glb}{\bigwedge}
+\newcommand{\stepfn}[2]{\mbox{$#1\nearrow #2$}}
+\newcommand{\dda}{\mathord{\mbox{\makebox[0pt][l]{\raisebox{-.4ex}
+                           {$\downarrow$}}$\downarrow$}}}
+\newcommand{\dua}{\mathord{\mbox{\makebox[0pt][l]{\raisebox{.4ex}
+                           {$\uparrow$}}$\uparrow$}}}
+
+\newcommand{\maclane}{Mac\thinspace Lane}
+
+
+\newcommand{\bA}{\mathbf{A}}
+\newcommand{\bB}{\mathbf{B}}
+\newcommand{\bC}{\mathbf{C}}
+\newcommand{\bD}{\mathbf{D}}
+\newcommand{\bE}{\mathbf{E}}
+\newcommand{\bF}{\mathbf{F}}
+\newcommand{\bG}{\mathbf{G}}
+\newcommand{\bH}{\mathbf{H}}
+\newcommand{\bI}{\mathbf{I}}
+\newcommand{\bJ}{\mathbf{J}}
+\newcommand{\bK}{\mathbf{K}}
+\newcommand{\bL}{\mathbf{L}}
+\newcommand{\bM}{\mathbf{M}}
+\newcommand{\bN}{\mathbf{N}}
+\newcommand{\bO}{\mathbf{O}}
+\newcommand{\bP}{\mathbf{P}}
+\newcommand{\bQ}{\mathbf{Q}}
+\newcommand{\bR}{\mathbf{R}}
+\newcommand{\bS}{\mathbf{S}}
+\newcommand{\bT}{\mathbf{T}}
+\newcommand{\bU}{\mathbf{U}}
+\newcommand{\bV}{\mathbf{V}}
+\newcommand{\bW}{\mathbf{W}}
+\newcommand{\bX}{\mathbf{X}}
+\newcommand{\bY}{\mathbf{Y}}
+\newcommand{\bZ}{\mathbf{Z}}
+
+\newcommand{\sA}{\mathsf{A}}
+\newcommand{\sB}{\mathsf{B}}
+\newcommand{\sC}{\mathsf{C}}
+\newcommand{\sD}{\mathsf{D}}
+\newcommand{\sE}{\mathsf{E}}
+\newcommand{\sF}{\mathsf{F}}
+\newcommand{\sG}{\mathsf{G}}
+\newcommand{\sH}{\mathsf{H}}
+\newcommand{\sI}{\mathsf{I}}
+\newcommand{\sJ}{\mathsf{J}}
+\newcommand{\sK}{\mathsf{K}}
+\newcommand{\sL}{\mathsf{L}}
+\newcommand{\sM}{\mathsf{M}}
+\newcommand{\sN}{\mathsf{N}}
+\newcommand{\sO}{\mathsf{O}}
+\newcommand{\sP}{\mathsf{P}}
+\newcommand{\sQ}{\mathsf{Q}}
+\newcommand{\sR}{\mathsf{R}}
+\newcommand{\sS}{\mathsf{S}}
+\newcommand{\sT}{\mathsf{T}}
+\newcommand{\sU}{\mathsf{U}}
+\newcommand{\sV}{\mathsf{V}}
+\newcommand{\sW}{\mathsf{W}}
+\newcommand{\sX}{\mathsf{X}}
+\newcommand{\sY}{\mathsf{Y}}
+\newcommand{\sZ}{\mathsf{Z}}
+
+\newcommand{\cA}{\mathcal{A}}
+\newcommand{\cB}{\mathcal{B}}
+\newcommand{\cC}{\mathcal{C}}
+\newcommand{\cD}{\mathcal{D}}
+\newcommand{\cE}{\mathcal{E}}
+\newcommand{\cF}{\mathcal{F}}
+\newcommand{\cG}{\mathcal{G}}
+\newcommand{\cH}{\mathcal{H}}
+\newcommand{\cI}{\mathcal{I}}
+\newcommand{\cJ}{\mathcal{J}}
+\newcommand{\cK}{\mathcal{K}}
+\newcommand{\cL}{\mathcal{L}}
+\newcommand{\cM}{\mathcal{M}}
+\newcommand{\cN}{\mathcal{N}}
+\newcommand{\cO}{\mathcal{O}}
+\newcommand{\cP}{\mathcal{P}}
+\newcommand{\cQ}{\mathcal{Q}}
+\newcommand{\cR}{\mathcal{R}}
+\newcommand{\cS}{\mathcal{S}}
+\newcommand{\cT}{\mathcal{T}}
+\newcommand{\cU}{\mathcal{U}}
+\newcommand{\cV}{\mathcal{V}}
+\newcommand{\cW}{\mathcal{W}}
+\newcommand{\cX}{\mathcal{X}}
+\newcommand{\cY}{\mathcal{Y}}
+\newcommand{\cZ}{\mathcal{Z}}
+
+\newcommand{\mfrA}{\mathfrak{A}}
+\newcommand{\mfrB}{\mathfrak{B}}
+\newcommand{\mfrC}{\mathfrak{C}}
+\newcommand{\mfrD}{\mathfrak{D}}
+\newcommand{\mfrE}{\mathfrak{E}}
+\newcommand{\mfrF}{\mathfrak{F}}
+\newcommand{\mfrG}{\mathfrak{G}}
+\newcommand{\mfrH}{\mathfrak{H}}
+\newcommand{\mfrI}{\mathfrak{I}}
+\newcommand{\mfrJ}{\mathfrak{J}}
+\newcommand{\mfrK}{\mathfrak{K}}
+\newcommand{\mfrL}{\mathfrak{L}}
+\newcommand{\mfrM}{\mathfrak{M}}
+\newcommand{\mfrN}{\mathfrak{N}}
+\newcommand{\mfrO}{\mathfrak{O}}
+\newcommand{\mfrP}{\mathfrak{P}}
+\newcommand{\mfrQ}{\mathfrak{Q}}
+\newcommand{\mfrR}{\mathfrak{R}}
+\newcommand{\mfrS}{\mathfrak{S}}
+\newcommand{\mfrT}{\mathfrak{T}}
+\newcommand{\mfrU}{\mathfrak{U}}
+\newcommand{\mfrV}{\mathfrak{V}}
+\newcommand{\mfrW}{\mathfrak{W}}
+\newcommand{\mfrX}{\mathfrak{X}}
+\newcommand{\mfrY}{\mathfrak{Y}}
+\newcommand{\mfrZ}{\mathfrak{Z}}
+
+\newcommand{\define}[1]{\textbf{#1}}
+\renewcommand{\qedsymbol}{$\blacksquare$}
+\def\onehalf{\frac{1}{2}}

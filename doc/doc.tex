@@ -1,0 +1,219 @@
+\documentclass{article} 
+
+\usepackage[UKenglish]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage[all]{xy}
+
+\usepackage{url}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsthm}
+
+\usepackage{enumerate}
+\usepackage{url}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+
+\include{macros}
+
+\usepackage{natbib}
+\setlength{\bibsep}{1.75pt}
+\usepackage{array}
+
+\title{Cyclic factorization of complete graphs into spanning trees with an Euler trail}
+\author{Alex Horn}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+A simple graph algorithm is presented which decomposes an $n$-complete graph of even order into edge-disjoint, isomorphic copies of a spanning tree whose edges form an Euler trail of length $n-1$. While more general methods of such spanning tree factorizations have been known, we emphasize here its simple algorithmic treatment with an efficient data structure.
+\end{abstract}
+
+\section{Introduction} 
+
+This document is written mainly for fun and it concerns a graph decomposition algorithm which computes the cyclic spanning tree factorization of complete graphs of even order. This algorithm could find application in ad hoc network designs in which link failures need to be restored quickly by creating a new isomorphic yet link-disjoint network structure.
+
+We consider only simple and finite graphs. Let $G$ be such a graph. A \define{decomposition} of $G$ is a set of pairwise edge-disjoint subgraphs $H_1, H_2, \ldots H_k$ such that every edge of $G$ belongs to exactly one subgraph $H_i$ for $1 \leq i \leq k$. If every such subgraph is isomorphic to a graph $H$, then $G$ is said to have an \define{$H$-decomposition}. An $H$-decomposition into $H_1, H_2, \ldots H_k$ is called \define{cyclic} if there exists an ordering $(x_1, x_2, \ldots, x_n)$ of the vertices of $G$ together with graph isomorphisms $\phi_i : H_1 \to H_i$, for all $1 < i \leq k$, such that $\phi_i(x_j) = x_{(i+j) \bmod n}$ for all $1 \leq j \leq n$. If $H$ has the same order as $G$ and none of the vertices in $H$ are isolated, then $H$ is a connected factor and the decomposition is called an \define{$H$-factorization}. In particular, if $H$ is a spanning tree, we say that graph $G$ has a \define{spanning tree factorization}. Figure~\ref{fig:cyclic-decomposition} (p.~\pageref{fig:cyclic-decomposition}) shows cyclic decompositions of the $6$-complete graph and $8$-complete graph which can be verified by ``rotating'' the subgraphs twice. Note that only the centre and most right decompositions are spanning tree factorizations.
+
+\begin{figure}[t]
+\center{
+\begin{tabular}{m{3.2cm} m{3.2cm} m{3.2cm}}
+  \[\xymatrix@=0.2cm{
+            & \bullet\ar@{-}[dd] && \bullet\ar@{-}[ll]\ar@{-}[ddll] &          \\
+    \bullet &                    &&                                 & \bullet  \\
+            & \bullet\ar@{-}[rr] && \bullet\ar@{-}[uu]              & 
+  }\]
+&
+  \[\xymatrix@=0.2cm{
+                         & \bullet\ar@{-}[ddrr] && \bullet\ar@{-}[ll] &          \\
+    \bullet\ar@{-}[urrr] &                      &&                    & \bullet  \\
+                         & \bullet\ar@{-}[urrr] && \bullet\ar@{-}[ll] & 
+  }\]
+&
+  \[\xymatrix@=0.2cm{
+                         & \bullet\ar@{-}[dddrr] && \bullet\ar@{-}[ll] &                      \\
+    \bullet\ar@{-}[urrr] &                       &&                    & \bullet\ar@{-}[llll] \\
+    \bullet              &                       &&                    & \bullet\ar@{-}[llll] \\
+                         & \bullet\ar@{-}[urrr]  && \bullet\ar@{-}[ll] & 
+  }\]
+\end{tabular}
+}
+\caption{Cyclic decomposition of $K_6$ into a subgraph whose edges form an Euler trail (left). Similarly, $K_6$ and $K_8$ have also a cyclic spanning tree factorization whose edges form an Euler trail (centre, right).}
+\label{fig:cyclic-decomposition}
+\end{figure}
+
+Many real-life applications such as network designs and combinatorial problems come in the disguise of complete graph decompositions. Graph theory studies their underlying properties. For example, when is the decomposition of a complete graph into cycles of length $m$ possible? Since the existence of such a decomposition requires the degree of every vertex to be even, the complete graph must be of odd degree. Otherwise, a $1$-factor can be removed from the $2n$-complete graph. Then, an $m$-cycle decomposition exists if and only if the length of the cycle, $m$, divides the number of edges in the graph~\cite{A01},~\cite{S02a}.
+
+In contrast, no necessary and sufficient condition is known for a tree to admit a factorization of complete graphs~\cite{K11}. Rather, most factorizations are subject to graph labeling techniques (see below). In general, a label is a function from the set of vertices into the set of natural numbers. Informally, these labels are chosen such that every edge appears in exactly one factor. In particular, Rosa-type labelings (see~\cite{E09} for a recent survey) are being used for cyclic decompositions of complete graphs into spanning trees~\cite{E97},~\cite{F02},~\cite{F04}.
+
+In the sequel, we automate the labeling of the vertices in an Euler trail such that it admits a cyclic decomposition into spanning trees of a complete graph. In fact, cyclic spanning tree factorizations can be completely characterized in terms of their symmetrical structure~\cite{E97},~\cite{F04}. Before we can make this characterization precise, we must agree on the following definitions.
+
+\begin{definition}\label{def:labeling}
+Define a \define{labeling} of a graph $G$ with $m$ edges to be an injective function $\lambda : V(G) \to L$ where $L = \{0, 1, \ldots , 2m\}$. The \define{length} of an edge $(x,y) \in E(G)$ is defined by $\ell(x,y) \deq min\{|\lambda(x)−\lambda(y)|, 2m+1−|\lambda(x)−\lambda(y)|\}$. If $\{ \ell(x,y) \alt (x,y) \in E(G) \} = \{1, 2, \ldots, m\}$, then $\lambda$ is called a \define{$\rho$-labeling}; if the image of $\lambda$ is moreover a subset of $\{0, 1, \ldots, m\}$, then $\lambda$ is a \define{graceful labeling}. A graph which admits a graceful labeling is said to be \define{graceful}.
+\end{definition}
+
+\begin{definition}\label{def:symmetric-labeling}
+A connected graph $G$ is \define{symmetric} if it has a bridge $(x,y)$ and there exists an automorphism $\phi$ such that $\phi(x) = y$ and $\phi(y) = x$. The isomorphic connected components of $G−(x,y)$ are called \define{banks} and denoted by $H$ and $H'$ respectively. A labeling of a symmetric graph $G$ with $2n−1$ edges and banks $H$ and $H'$ is \define{$\rho$-symmetric graceful} if $H$ has a $\rho$-labeling and $\lambda(\phi(x)) = \lambda(x) + n$ for each vertex $x \in V(H)$. A labeling of a symmetric graph with $2n − 1$ edges is said to be \define{symmetric graceful} if it is $\rho$-symmetric graceful and the bank H is moreover graceful.
+\end{definition}
+
+\begin{theorem}[\cite{E97},\cite{F04}]\label{theorem:cyclic-decomposition}
+Let $G$ be a symmetric graph with $2n − 1$ edges. Then, $K_{2n}$ has a cyclic $G$-decomposition if and only if G is $\rho$-symmetric graceful.
+\end{theorem}
+
+In the next section, we present a polynomial time graph algorithm which constructs the symmetric graceful spanning tree of $K_{2n}$ with the additional constraint that this spanning tree must have an Euler trail. Clearly, the length of this Euler trail is bound to be odd ($2n-1$). Moreover, the spanning tree which contains the Euler trail is unique up to isomorphism.
+
+%\begin{proposition}\label{proposition:unique-spanning-tree}
+%Let $S$ be a spanning tree of $K_n$ for even $n$. If $S$ has an Euler trail, then $S$ is unique up to isomorphism.
+%\begin{proof}
+%We prove the uniqueness of $S$ by induction on $n$. Clearly, the $2$-complete graph has a unique spanning tree. For the induction step, suppose $K_{n+2}$ has two spanning trees $S$ and $S'$ with an Euler trail. By Euler's Theorem, $S$ must have exactly two vertices of odd degree. Denote both these vertices by $a$ and $b$. Then, $a$ and $b$ must have degree one; for otherwise, the degree of every vertex in $S$ would be at least two forcing the existence of a cycle. An identical argument applies to $S'$. Thus, there exists an isomorphism between the odd degree vertices in $S$ and $S'$. By induction hypothesis, the subtrees induced by deleting both these vertices from $S$ and $S'$ are isomorphic.
+%\end{proof}
+%\end{proposition}
+
+\section{Algorithm}
+ 
+Given the $2n$-complete graph, we aim at finding the spanning tree $S$ with an Euler trail such that $K_{2n}$ has a cyclic $S$-decomposition. This spanning tree factorization is computed by Algorithm~\ref{algorithm:spanning-tree} and Algorithm~\ref{algorithm:spanning-tree-decomposition} (see p.~\pageref{algorithm:spanning-tree-decomposition}). More precisely, Algorithm~\ref{algorithm:spanning-tree} computes the symmetric labeling of the Euler trail such that a cyclic spanning tree factorization exists by theorem~\eqref{theorem:cyclic-decomposition}. Then, Algorithm~\ref{algorithm:spanning-tree-decomposition} creates the cyclic permutations of this Euler trail.
+
+\begin{algorithm}
+\caption{Finds the spanning tree $S$ with an Euler trail such that $K_{2n}$ has a cyclic $S$-decomposition. The Euler trail in $S$ is formed by the edges incident to the vertex labeled $k$ and vertex labeled $trails[k]$ where $0 \leq k < 2n$. The trail can be traversed by starting at the vertex labeled $0$ and stops when $trail[k]=k$ for some  $0 \leq k < 2n$.}
+\label{algorithm:spanning-tree}
+\begin{algorithmic}
+\REQUIRE $N$ to be even and $N \geq 2$
+\REQUIRE $trail[k] = k$ for all $0 \leq k < N$
+
+\STATE $i \leftarrow 0$
+\STATE $j \leftarrow N / 2 - 1$
+\STATE $x \leftarrow N - 1$
+\STATE $y \leftarrow N / 2$
+\LOOP
+\STATE $trail[i] \leftarrow j$
+\STATE $trail[x] \leftarrow y$
+\STATE $i \leftarrow i + 1$
+\STATE $y \leftarrow y + 1$
+\IF{$i = j$}
+\STATE exit loop
+\ENDIF
+\STATE $trail[j] \leftarrow i$
+\STATE $trail[y] \leftarrow x$
+\STATE $j \leftarrow j - 1$
+\STATE $x \leftarrow x - 1$
+\IF{$i = j$}
+\STATE exit loop
+\ENDIF
+\ENDLOOP
+\IF{$N > 2$}
+\STATE $trail[i] \leftarrow y$
+\ENDIF
+\end{algorithmic}
+\end{algorithm}
+
+The following runtime complexity result is obvious:
+
+\begin{proposition}\label{proposition:spanning-tree-analysis}
+Algorithm~\ref{algorithm:spanning-tree} is $O(n)$ given the $2n$-complete graph.
+\begin{proof}
+Given $K_{2n}$, the loop iterates $n$ times plus a final constant operation.
+\end{proof}
+\end{proposition}
+
+\begin{algorithm}
+\caption{Computes the cyclic permutations of the symmetric spanning tree of $K_{2n}$ (see Algorithm~\ref{algorithm:spanning-tree}). For each $0 \leq s < n$, the tree traversal starts at the vertex labeled $trail[s][s]$ and stops when $trail[s][t]=t$ for some $0 \leq t < 2n$.}
+\label{algorithm:spanning-tree-decomposition}
+\begin{algorithmic}
+\REQUIRE $N$ to be even and $N \geq 2$ 
+\REQUIRE $trail[s][k] = k$ for all $0 \leq s < \onehalf N$ and $0 \leq k < N$
+
+\STATE Store result of Algorithm~\ref{algorithm:spanning-tree} into $trails[0]$
+\FOR{$i = 1$ to $\onehalf N - 1$}
+\FOR{$j = 0$ to $N - 1$}
+\STATE $v \leftarrow (trails[i - 1][j] + 1) \bmod N$
+\STATE $trails[i][(j + 1) \bmod N] \leftarrow v$
+\ENDFOR
+\ENDFOR
+\end{algorithmic}
+\end{algorithm}
+
+\begin{proposition}
+Algorithm~\ref{algorithm:spanning-tree-decomposition} is $O(n^2)$ given the $2n$-complete graph.
+\begin{proof}
+By proposition~\eqref{proposition:spanning-tree-analysis}, Algorithm~\ref{algorithm:spanning-tree} is $O(n)$. Afterwards, the innermost loop executes $2n$ times. The outermost loop executes this loop $n - 1$ times counting a total of $2(n^2 - n)$ iterations. Therefore, Algorithm~\ref{algorithm:spanning-tree-decomposition} is $O(n^2)$.
+\end{proof}
+\end{proposition}
+
+\begin{figure}[b!]
+\centering{
+\begin{displaymath}
+  \xymatrix{
+    *+[o][F]{0}\ar@/^2.2pc/@{-}[rrrr]  &
+    *+[o][F]{1}\ar@/^1pc/@{-}[rr]      &
+    *+[o][F]{2}\ar@/^2.5pc/@{-}[rrrrr] &
+    *+[o][F]{3}\ar@/_0.5pc/@{-}[l]     &
+    *+[o][F]{4}\ar@/_1.5pc/@{-}[lll]   &
+    *+[o][F]{5}                        &
+    *+[o][F]{6}\ar@/^1.5pc/@{-}[rrr]   &
+    *+[o][F]{7}\ar@/^0.5pc/@{-}[r]     &
+    *+[o][F]{8}\ar@/_1pc/@{-}[ll]      &
+    *+[o][F]{9}\ar@/_2.2pc/@{-}[llll] 
+  }
+\end{displaymath}
+
+\begin{tabular}{|c||c|c|c|c|c|c|c|c|c|c|}
+\hline
+$v$        & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 \\ \hline
+$trail[v]$ & 4 & 3 & 7 & 2 & 1 & 5 & 9 & 8 & 6 & 5 \\ \hline
+\end{tabular}
+}
+\caption{The diagrammatic and key-indexed array representation of the spanning tree with an Euler trail for the $10$-complete graph. This Euler trail is formed by joining the vertices labeled as $0,4,1,3,2,7,8,6,9,5$. More generally, notice that $trail[v]$ is the label of the vertex adjacent to the vertex labeled $v$. If $trail[v] = v$, then the end of the trail has been reached. According to definition~\eqref{def:symmetric-labeling}, the spanning tree is symmetric because the subgraphs formed by the edges of the trail $0,4,1,3,2$ and $7,8,6,9,5$ are two isomorphic banks joined by the bridge between the vertices labeled $2$ and $7$. Since the first bank is graceful, we conclude that the entire spanning tree is symmetric graceful.}
+\label{fig:spanning-tree}
+\end{figure}
+
+Both algorithms feature an efficient key-indexed array data structure which represents vertex labels and supports the traversal of the spanning trees.
+
+\begin{example}
+Figure~\ref{fig:spanning-tree} (p.~\pageref{fig:spanning-tree}) illustrates the spanning tree labeling produced by Algorithm~\ref{algorithm:spanning-tree} (p.~\pageref{algorithm:spanning-tree}) of the $10$-complete graph. This labeling is symmetric graceful by definition~\eqref{def:symmetric-labeling}. Therefore, by theorem~\eqref{theorem:cyclic-decomposition}, the algorithm produced a cyclic spanning tree factorization of the $10$-complete graph. Algorithm~\ref{algorithm:spanning-tree-decomposition}, in turn, creates the cyclic permutations of the trail to obtain the remaining four Euler trails of equal length which partition the edge set accordingly.
+\end{example}
+
+\section{Conclusion}
+
+In summary, by relying on more recent graph theoretical results based on $\rho$-labelings~\cite{E97},~\cite{F04}, a simple polynomial time graph algorithm was presented that constructs a spanning tree factorization of the $2n$-complete graph such that the spanning tree has an Euler trail.
+
+\begin{figure}[t]
+\centering{
+\begin{tabular}{|c||c|c|c|c|c|c|c|c|c|c|}
+\hline
+$v$           & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 \\ \hline
+$trail[1][v]$ & 6 & 5 & 4 & 8 & 3 & 2 & 6 & 0 & 9 & 7 \\ \hline
+$trail[2][v]$ & 8 & 7 & 6 & 5 & 9 & 4 & 3 & 7 & 1 & 0 \\ \hline
+$trail[3][v]$ & 1 & 9 & 8 & 7 & 6 & 0 & 5 & 4 & 8 & 2 \\ \hline
+$trail[4][v]$ & 3 & 2 & 0 & 9 & 8 & 7 & 1 & 6 & 5 & 9 \\ \hline
+\end{tabular}
+}
+\label{fig:spanning-tree-decomposition}
+\caption{Given the trail from Figure~\ref{fig:spanning-tree} (p.~\pageref{fig:spanning-tree}), Algorithm~\ref{algorithm:spanning-tree-decomposition} (p.~\pageref{algorithm:spanning-tree-decomposition}) computes the remaining four trails of length nine by applying cyclic permutations.}
+\end{figure}
+
+\bibliographystyle{plain}
+\bibliography{doc}
+
+\end{document}
